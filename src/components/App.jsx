@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
-import Form from './Form/Form';
-import Contacts from './Contacts/Contacts';
-import Filter from './Filter/Filter';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import css from './App.module.css';
+
+const LazyForm = lazy(() => import('./Form/Form'));
+const LazyContacts = lazy(() => import('./Contacts/Contacts'));
+const LazyFilter = lazy(() => import('./Filter/Filter'));
 
 const App = () => {
   const [contacts, setContacts] = useState([]);
@@ -60,13 +61,15 @@ const App = () => {
   const visibleContacts = getVisibleContacts();
 
   return (
-    <div className={css.app}>
-      <h1>Phonebook</h1>
-      <Form onSubmit={formSubmitHandler} />
-      <h2>Contacts</h2>
-      <Filter value={filter} onChange={changeFilter} />
-      <Contacts contacts={visibleContacts} deleteContact={deleteContact} />
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className={css.app}>
+        <h1>Phonebook</h1>
+        <LazyForm onSubmit={formSubmitHandler} />
+        <h2>Contacts</h2>
+        <LazyFilter value={filter} onChange={changeFilter} />
+        <LazyContacts contacts={visibleContacts} deleteContact={deleteContact} />
+      </div>
+    </Suspense>
   );
 };
 
