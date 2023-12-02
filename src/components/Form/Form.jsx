@@ -1,61 +1,59 @@
+import { useState } from 'react';
 import { nanoid } from 'nanoid';
 import css from './Form.module.css';
-const { Component } = require('react');
 
-class Form extends Component {
-  state = {
+const Form = ({ onSubmit }) => {
+  const [formData, setFormData] = useState({
     name: '',
     number: '',
-  };
+  });
 
-  handleChange = e => {
+  const handleChange = (e) => {
     const { name, value } = e.currentTarget;
-    this.setState({ [name]: value });
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const { name, number } = this.state;
+    const { name, number } = formData;
     const id = nanoid();
-    this.props.onSubmit({ id, name, number });
-    this.reset();
+    onSubmit({ id, name, number });
+    reset();
   };
 
-  reset = () => {
-    this.setState({ name: '', number: '' });
+  const reset = () => {
+    setFormData({ name: '', number: '' });
   };
 
-  render() {
-    return (
-      <div className={css.formContainer}>
-        <form className={css.form} onSubmit={this.handleSubmit}>
-          <label>
-            <input
-              className={css.input}
-              type="text"
-              name="name"
-              placeholder="Name"
-              value={this.state.name}
-              onChange={this.handleChange}
-              required
-            />
-          </label>
-          <label>
-            <input
-              className={css.input}
-              type="tel"
-              placeholder="Number"
-              name="number"
-              value={this.state.number.replace(/[^0-9.]/g, '')}
-              onChange={this.handleChange}
-              required
-            />
-          </label>
-          <button className={css.formButton}>Add Contact</button>
-        </form>
-      </div>
-    );
-  }
-}
+  return (
+    <div className={css.formContainer}>
+      <form className={css.form} onSubmit={handleSubmit}>
+        <label>
+          <input
+            className={css.input}
+            type="text"
+            name="name"
+            placeholder="Name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+          />
+        </label>
+        <label>
+          <input
+            className={css.input}
+            type="tel"
+            placeholder="Number"
+            name="number"
+            value={formData.number.replace(/[^0-9.]/g, '')}
+            onChange={handleChange}
+            required
+          />
+        </label>
+        <button className={css.formButton}>Add Contact</button>
+      </form>
+    </div>
+  );
+};
 
 export default Form;
